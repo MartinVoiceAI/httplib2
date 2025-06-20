@@ -1564,29 +1564,34 @@ a string that contains the response entity body.
                     connection_type = SCHEME_TO_CONNECTION[scheme]
                 certs = list(self.certificates.iter(authority))
                 if issubclass(connection_type, HTTPSConnectionWithTimeout):
-                    if certs:
+                    try:
+                        if certs:
+                            conn = self.connections[conn_key] = connection_type(
+                                authority,
+                                key_file=certs[0][0],
+                                cert_file=certs[0][1],
+                                timeout=self.timeout,
+                                proxy_info=self.proxy_info,
+                                ca_certs=self.ca_certs,
+                                disable_ssl_certificate_validation=self.disable_ssl_certificate_validation,
+                                tls_maximum_version=self.tls_maximum_version,
+                                tls_minimum_version=self.tls_minimum_version,
+                                key_password=certs[0][2],
+                            )
+                        else:
+                            conn = self.connections[conn_key] = connection_type(
+                                authority,
+                                timeout=self.timeout,
+                                proxy_info=self.proxy_info,
+                                ca_certs=self.ca_certs,
+                                disable_ssl_certificate_validation=self.disable_ssl_certificate_validation,
+                                tls_maximum_version=self.tls_maximum_version,
+                                tls_minimum_version=self.tls_minimum_version,
+                            )
+                    except Exception as e:
                         conn = self.connections[conn_key] = connection_type(
-                            authority,
-                            key_file=certs[0][0],
-                            cert_file=certs[0][1],
-                            timeout=self.timeout,
-                            proxy_info=self.proxy_info,
-                            ca_certs=self.ca_certs,
-                            disable_ssl_certificate_validation=self.disable_ssl_certificate_validation,
-                            tls_maximum_version=self.tls_maximum_version,
-                            tls_minimum_version=self.tls_minimum_version,
-                            key_password=certs[0][2],
-                        )
-                    else:
-                        conn = self.connections[conn_key] = connection_type(
-                            authority,
-                            timeout=self.timeout,
-                            proxy_info=self.proxy_info,
-                            ca_certs=self.ca_certs,
-                            disable_ssl_certificate_validation=self.disable_ssl_certificate_validation,
-                            tls_maximum_version=self.tls_maximum_version,
-                            tls_minimum_version=self.tls_minimum_version,
-                        )
+                        authority, timeout=self.timeout, proxy_info=self.proxy_info
+                    )
                 else:
                     conn = self.connections[conn_key] = connection_type(
                         authority, timeout=self.timeout, proxy_info=self.proxy_info
