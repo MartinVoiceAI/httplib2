@@ -1588,7 +1588,7 @@ a string that contains the response entity body.
                                 tls_maximum_version=self.tls_maximum_version,
                                 tls_minimum_version=self.tls_minimum_version,
                             )
-                    except Exception as e:
+                    except TypeError as e:
                         conn = self.connections[conn_key] = connection_type(
                         authority, timeout=self.timeout, proxy_info=self.proxy_info
                     )
