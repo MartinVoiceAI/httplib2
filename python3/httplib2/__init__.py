@@ -1106,7 +1106,7 @@ class HTTPSConnectionWithTimeout(http.client.HTTPSConnection):
             minimum_version=tls_minimum_version,
             key_password=key_password,
         )
-        super(HTTPSConnectionWithTimeout, self).__init__(
+        super().__init__(
             host, port=port, timeout=timeout, context=context,
         )
         self.key_file = key_file
